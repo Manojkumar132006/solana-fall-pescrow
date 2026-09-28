@@ -80,5 +80,11 @@ pub fn process_cancel_instruction(accounts: &mut [AccountView], data: &[u8]) -> 
         multisig_signers: &[] as &[&AccountView],
     }
     .invoke_signed(&[signer])?;
+
+    let escrow_lamports = escrow_account.lamports();
+    maker.set_lamports(maker.lamports() + escrow_lamports);
+    escrow_account.set_lamports(0);
+    escrow_account.close()?;
+
     Ok(())
 }
